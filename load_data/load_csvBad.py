@@ -15,9 +15,9 @@ from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPRegressor
 
 #Hyper-Parameters
-k = 3
-n_components = 10
-hidden_layers = 100
+k = 10
+n_components = 20
+hidden_layers = 50
 
 path = r"C:\Users\marce\Documents\GitHub\DataScience\data\\"
 file = "train.csv"
@@ -34,11 +34,11 @@ m = data.shape[1]
 
 categoricalIdx = []
 data2 = data.copy()
-
 for i in range(0, m):
     if (isinstance(data.iloc[:,i][0],str) or np.isnan(data.iloc[:,i][0])):
         categoricalIdx.append(i);
-        data2 = data2.drop(data.columns[i], axis=1)
+        modifiedoCol = pd.factorize(data.iloc[:,i],na_sentinel=-2)
+        data2.iloc[:,i] = modifiedoCol[0]+1;
 
 data2 = data2.replace(-1, np.nan)
 
@@ -68,15 +68,4 @@ nn = MLPRegressor(hidden_layers,  activation='relu', solver='adam', alpha=0.001,
 nfit = nn.fit(train, test)
 
 test_y = nn.predict(XTest)
-sum((YTest[:]-test_y[:])**2)
-
-
-#1134592627137.055 k = 5 n_components = 30 hidden_layers = 20
-#970910594690.9963 k = 3 n_components = 30 hidden_layers = 20
-#959595362852.4857 k = 5 n_components = 30 hidden_layers = 100
-#917028653180.8207 k = 5 n_components = 5  hidden_layers = 100
-#936797212094.2263 k = 3 n_components = 5  hidden_layers = 100
-#905737274073.2963 k = 5 n_components = 5 hidden_layers = 300
-#1037228566918.274 k = 10 n_components = 5 hidden_layers = 300
-#967012833650.2606 k = 2 n_components = 5 hidden_layers = 300
-#922831888441.7684 k = 5 n_components = 5 hidden_layers = 1000
+sum((YTest[:]-test_y[:])**2
